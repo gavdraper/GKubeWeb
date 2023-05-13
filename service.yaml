@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gkubeweb
+  name: gkubeweb
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: gkubeweb
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost

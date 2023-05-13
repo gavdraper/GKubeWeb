@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gkubeweb
+  name: gkubeweb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gkubeweb
+  template:
+    metadata:
+      labels:
+        app: gkubeweb
+    spec:
+      containers:
+      - image: gkubeweb:V1
+        name: gkubeweb
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "0.25"
+          limits:
+            memory: "200Mi"  
+            cpu: "0.5"     
+        livenessProbe:
+          httpGet:
+            path: /liveness/variable
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          failureThreshold: 5
