@@ -1,10 +1,10 @@
+using System.Web;
+
 Globals.StartupTime = DateTime.Now;
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
 
 app.Logger.LogInformation("The app started");
-
-app.MapGet("/", () => "Hello World From " + System.Environment.MachineName) ;
 
 /* Readyness */
 app.MapGet("/ready/ready", () => Results.Ok("Ready"));
@@ -37,8 +37,23 @@ app.MapGet("liveness/variable", () => {
 });
 
 // List Files
+app.MapGet("folder/{path?}", (string? path) => {
+    app.Logger.LogError(path ?? "Null");
+    var decodedPath = HttpUtility.UrlDecode(path);
+    if(!string.IsNullOrEmpty(decodedPath) && !Directory.Exists(decodedPath))
+        return Results.BadRequest();
+    var files = Directory.GetFiles(decodedPath ?? Directory.GetCurrentDirectory());
+    return Results.Ok(files);
+});
 
 // List Env Vars
+app.MapGet("environment", () => {
+    var vars = Environment.GetEnvironmentVariables();
+    return Results.Ok(Environment.GetEnvironmentVariables());
+});
+
+//Machine Info
+app.MapGet("/machine",() => Results.Ok(Environment.MachineName));
 
 
 app.Run();
