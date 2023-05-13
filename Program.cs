@@ -21,7 +21,7 @@ app.MapPost("liveness/failCount", (HttpRequest request) =>
 {
     if(!request.Query.ContainsKey("count"))
         return Results.BadRequest("Count not provided");
-    var count = int.Parse(request.Query["count"]);
+    var count = int.Parse(request.Query["count"].ToString() ?? "0");
     Globals.LivenessTimesToFail = count;
     return Results.Ok("I'm Alive");
 });
