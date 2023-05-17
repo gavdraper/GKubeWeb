@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  version: "0.1"
+  author : "Gavin"
+kind: ConfigMap
+metadata:
+  name: config-env

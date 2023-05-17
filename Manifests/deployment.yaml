@@ -14,10 +14,48 @@ spec:
       labels:
         app: gkubeweb
     spec:
+      volumes:
+      - name: meme
+        emptyDir: 
+          sizeLimit: "10Mi"
+      - name : hosting
+        hostPath:
+          path: /Users/gavindraper/Dev/GKubeWeb
+      initContainers:
+      - name: volume-initer
+        volumeMounts:
+          - mountPath: /meme 
+            name: meme
+        image: busybox:1.28
+        command: ['sh', '-c', "echo 'boo' >  /meme/hello-world.txt"]
       containers:
       - image: gkubeweb:V1
         name: gkubeweb
+        volumeMounts:
+          - mountPath: /meme 
+            name: meme
+          - mountPath: /deving
+            name: hosting
         imagePullPolicy: IfNotPresent
+        env:
+        - name: "pwd"
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: pwd
+        - name: "version"
+          valueFrom: 
+            configMapKeyRef:
+              name: config-env
+              key: "version"
+        - name: "author"
+          valueFrom:
+            configMapKeyRef:
+              key: "author"
+              name: config-env
+        # envFrom:
+        # - configMapRef:
+        #     name: config-env
         resources:
           requests:
             memory: "100Mi"
